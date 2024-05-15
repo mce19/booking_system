@@ -17,7 +17,7 @@ class ScheduleAvailability
 {
 
     // CON ScheduleAvailability calculO y gestiono la disponibilidad horaria de un Employee para un Service específico dentro de un rango de fechas. Utiliza Carbon para trabajar con fechas y horas y Spatie\Period para manejar períodos y exclusiones.
-    
+
     protected PeriodCollection $periods;
 
     public function __construct(protected Employee $employee, protected Service $service)
