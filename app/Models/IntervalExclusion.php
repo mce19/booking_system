@@ -15,7 +15,7 @@ class IntervalExclusion  extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function getWorkingHours(Carbon $date)
+    public function getIntervalHoursForDate(Carbon $date)
     {
         $hours = array_filter([
             $this->{strtolower($date->format('l')) . '_starts_at'},

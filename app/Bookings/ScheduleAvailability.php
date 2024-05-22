@@ -12,11 +12,10 @@ use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
 use Spatie\Period\Precision;
+use App\Models\IntervalExclusion;
 
 class ScheduleAvailability
 {
-
-    // CON ScheduleAvailability calculO y gestiono la disponibilidad horaria de un Employee para un Service específico dentro de un rango de fechas. Utiliza Carbon para trabajar con fechas y horas y Spatie\Period para manejar períodos y exclusiones.
 
     protected PeriodCollection $periods;
 
@@ -34,7 +33,7 @@ class ScheduleAvailability
                 $this->employee->scheduleExclusions->each(function (ScheduleExclusion $exclusion) {
                     $this->subtractScheduleExclusion($exclusion);
                 });
-
+                
                 $this->excludeTimePassedToday();
             });
 
@@ -65,6 +64,28 @@ class ScheduleAvailability
         );
     }
 
+    protected function subtractIntervalExclusion(Carbon $date)
+    {
+
+        if (!$schedule = $this->employee->schedules->where('starts_at', '<=', $date)->where('ends_at', '>=', $date)->first()) {
+            return;
+        }
+
+        if (![$startsAt, $endsAt] = $schedule->getIntervalHoursForDate($date)) {
+            return;
+        }
+
+        $this->periods = $this->periods->subtract(
+            Period::make(
+                $date->starts_at = $startsAt,
+                $date->ends_at =  $endsAt,
+                Precision::MINUTE(),
+                Boundaries::EXCLUDE_END()
+            )
+        );
+    }
+
+
     protected function addAvailabilityFromSchedule(Carbon $date)
     {
         if (!$schedule = $this->employee->schedules->where('starts_at', '<=', $date)->where('ends_at', '>=', $date)->first()) {
@@ -83,4 +104,5 @@ class ScheduleAvailability
             )
         );
     }
+
 }

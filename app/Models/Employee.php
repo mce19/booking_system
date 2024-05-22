@@ -28,4 +28,9 @@ class Employee extends Model
     {
         return $this->hasMany(Appointment::class);
     }
+
+    public function intervalExclusions()
+    {
+        return $this->hasMany(IntervalExclusion::class);
+    }
 }
